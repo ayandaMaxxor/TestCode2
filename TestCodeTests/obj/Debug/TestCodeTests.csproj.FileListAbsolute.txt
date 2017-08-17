@@ -1,0 +1,8 @@
+D:\Work\ION\TestCode2\TestCodeTests\bin\Debug\TestCodeTests.dll
+D:\Work\ION\TestCode2\TestCodeTests\bin\Debug\TestCodeTests.pdb
+D:\Work\ION\TestCode2\TestCodeTests\bin\Debug\System.Runtime.InteropServices.RuntimeInformation.dll
+D:\Work\ION\TestCode2\TestCodeTests\bin\Debug\TestCode.dll
+D:\Work\ION\TestCode2\TestCodeTests\bin\Debug\TestCode.pdb
+D:\Work\ION\TestCode2\TestCodeTests\obj\Debug\TestCodeTests.csprojResolveAssemblyReference.cache
+D:\Work\ION\TestCode2\TestCodeTests\obj\Debug\TestCodeTests.dll
+D:\Work\ION\TestCode2\TestCodeTests\obj\Debug\TestCodeTests.pdb
