@@ -17,3 +17,4 @@ What must be completed:
 
 Note that we have supplied a sample stub for IStatsWeighting in the test project.
 We are not concerned about the implementation of the Apply method in this interface (return 1 for the sake of this test and a exception if the player has done less than 100 races) but rather verifying it is called under the correct circumstances. 
+
