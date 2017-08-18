@@ -54,7 +54,7 @@ namespace TestCodeTests
         {
             var result = sut.TeamWinPercentage();
 
-            Assert.AreEqual(result.Count(), 4);
+            Assert.AreEqual(4, result.Count());
 
         }
         [Test]
@@ -63,7 +63,35 @@ namespace TestCodeTests
             var result = sut.TeamWinPercentage(50);
             var teamValue = new List<TeamValue>();
 
-            Assert.AreEqual(result, teamValue);
+            Assert.AreEqual(teamValue, result );
+
+        }
+        [Test]
+        public void ShouldReturn0WeightingForTeam3()
+        {
+            var result = sut.TeamWinPercentage().Single(x => x.Name == "We play for food Team Value");
+           
+            Assert.AreEqual(0,result.PlayerWeighting);
+
+        }
+        [Test]
+        public void ShouldSortResultsInDescendingOrderByTeamWinPercentage()
+        {
+            var result = sut.TeamWinPercentage().ToArray();
+            var count = 0;
+
+            for (var i = 0; i < result.Count(); i++)
+            {
+                if (i < result.Count() - 1)
+                {
+                    if (result[i].TeamWinsPercentage > result[i + 1].TeamWinsPercentage)
+                    {
+                        count++;
+                    }
+                }
+            }
+
+            Assert.AreEqual(3, count);
 
         }
     }

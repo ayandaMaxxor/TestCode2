@@ -74,10 +74,10 @@ namespace TestCode
 
             foreach (var team in teams)
             {
-                teamValue.Add(ReturnTeamValue(team));// = DoIt(team, teamValue);
+                teamValue.Add(ReturnTeamValue(team));
             }
 
-            return teamValue;
+            return teamValue.OrderByDescending(x => x.TeamWinsPercentage).ToList();
         }
 
         private TeamValue ReturnTeamValue(Team team)
@@ -130,10 +130,11 @@ namespace TestCode
             return Convert.ToDouble(percentage);
         }
 
-        private double GetTeamWinPercentage(Team team)
+        private static double GetTeamWinPercentage(Team team)
         {
             var value = ((double)team.Victories / team.Matches) * 100;
             var percentage = Convert.ToInt32(Math.Round(value, 0));
+
             return Convert.ToDouble(percentage);
         }
 
@@ -142,14 +143,14 @@ namespace TestCode
             return TeamReferenceData.SingleOrDefault(x => x.Id == teamId);
         }
 
-        private IList<TeamValue> ExecuteTeamValuePerSpecificTeam(Team team)
+        private IEnumerable<TeamValue> ExecuteTeamValuePerSpecificTeam(Team team)
         {
             IList<TeamValue> teamValue = new List<TeamValue>();
-            return DoIt(team, teamValue);
+            return BuildTeamValueCollection(team, teamValue).OrderByDescending(x=>x.PlayerWinPercentage).ToList();
            
         }
 
-        private IList<TeamValue> DoIt(Team team, IList<TeamValue> teamValue )
+        private IEnumerable<TeamValue> BuildTeamValueCollection(Team team, IList<TeamValue> teamValue )
         {
             if (team == null) return new List<TeamValue>();
 
@@ -172,7 +173,7 @@ namespace TestCode
             {
                 teamValue.Add(new TeamValue
                 {
-                    Id = new Random().Next(),
+                    Id = new Random().Next(52),
                     Name = team.Name + " Team Value",
                     TeamWinsPercentage = teamWinPercentage,
                     PlayerWinPercentage = playerWinsPerc,
