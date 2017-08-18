@@ -22,6 +22,18 @@ namespace TestCode
         //   Player.PlayerNumber is the field to be compared against
         public Player PlayerByPlayerNumber(int playerNumber)
         {
+            if (playerNumber <= 0) return null;
+        
+            foreach (var team in TeamReferenceData)
+            {
+                var player = team.Players.FirstOrDefault(x => x.PlayerNumber == playerNumber);
+
+                if (player != null)
+                {
+                    return player;
+                }
+                
+            }
             return null;
         }
 
