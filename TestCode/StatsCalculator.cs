@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Xml;
 using TestCode.Models;
 
 namespace TestCode
@@ -8,6 +10,7 @@ namespace TestCode
     {
         public IEnumerable<Team> TeamReferenceData { get; set; }
         public IStatsWeighting StatsWeighting { get; set; }
+        public int _random;
 
         public StatsCalculator(IEnumerable<Team> teamReferenceData, IStatsWeighting statsWeighting)
         {
@@ -22,9 +25,25 @@ namespace TestCode
         //   Player.PlayerNumber is the field to be compared against
         public Player PlayerByPlayerNumber(int playerNumber)
         {
+            if (playerNumber <= 0) return null;
+        
+            foreach (var team in TeamReferenceData)
+            {
+                var player = team.Players.FirstOrDefault(x => x.PlayerNumber == playerNumber);
+
+                if (player != null)
+                {
+                    return player;
+                }
+                
+            }
             return null;
         }
 
+        private int GenerateId()
+        {
+            return _random = new Random().Next(52);
+        }
         // TODO: For each team return their win % as well as their players win %, sorted by the team 'win %' highest to lowest.
         // If a teamId is specified then return data for only that team i.e. result list will only contain a single entry
         // otherwise if the teamId=0 return item data for each team in TeamReferenceData supplied in the constructor.
@@ -38,8 +57,130 @@ namespace TestCode
         //   Player Win % is Player.Wins over Player.Matches i.e. the sum of all players win / matches on the team.
         public IEnumerable<TeamValue> TeamWinPercentage(int teamId = 0)
         {
-            return new List<TeamValue>();
+            if (teamId != 0)
+            {
+                var team = ReturnTeam(teamId);
+                return ExecuteTeamValuePerSpecificTeam(team);
+            }
+            else
+            {
+                return ExecuteTeamValuePerTeam(TeamReferenceData.ToList());
+            }
+         
+        }
+        private IEnumerable<TeamValue> ExecuteTeamValuePerTeam(IList<Team> teams )
+        {
+            IList<TeamValue> teamValue = new List<TeamValue>();
+
+            foreach (var team in teams)
+            {
+                teamValue.Add(ReturnTeamValue(team));
+            }
+
+            return teamValue.OrderByDescending(x => x.TeamWinsPercentage).ToList();
         }
 
+        private TeamValue ReturnTeamValue(Team team)
+        {
+            var teamValue = new TeamValue();
+            var teamWinPercentage = GetTeamWinPercentage(team);
+
+            double playerWeighting = 0;
+            double playerWinsPerc = 0;
+            var hundredMarkCount = 0;
+
+            foreach (var player in team.Players)
+            {
+                playerWinsPerc += GetPlayerWinPercentage(player.PlayerNumber);
+
+                if (player.Matches >= 100)
+                {
+                    playerWeighting = StatsWeighting.Apply(playerWinsPerc, player.Matches);
+                    hundredMarkCount++;
+                }
+            }
+            if (hundredMarkCount >= 1)
+            {
+                teamValue.Id = GenerateId();
+                teamValue.Name = team.Name + " Team Value";
+                teamValue.PlayerWeighting = playerWeighting;
+                teamValue.TeamWinsPercentage = teamWinPercentage;
+                teamValue.PlayerWinPercentage = playerWinsPerc;
+               
+            }
+            else
+            {
+                teamValue.Id = GenerateId();
+                teamValue.Name = team.Name + " Team Value";
+                teamValue.PlayerWeighting = 0;
+                teamValue.TeamWinsPercentage = teamWinPercentage;
+                teamValue.PlayerWinPercentage = playerWinsPerc;
+            }
+            return teamValue;
+
+
+        }
+        private double GetPlayerWinPercentage(int playerNumber)
+        {
+            var player = PlayerByPlayerNumber(playerNumber);
+          
+            var value = ((double)player.Wins / player.Matches) * 100;
+            var percentage = Convert.ToInt32(Math.Round(value, 0));
+
+            return Convert.ToDouble(percentage);
+        }
+
+        private static double GetTeamWinPercentage(Team team)
+        {
+            var value = ((double)team.Victories / team.Matches) * 100;
+            var percentage = Convert.ToInt32(Math.Round(value, 0));
+
+            return Convert.ToDouble(percentage);
+        }
+
+        private Team ReturnTeam(int teamId)
+        {
+            return TeamReferenceData.SingleOrDefault(x => x.Id == teamId);
+        }
+
+        private IEnumerable<TeamValue> ExecuteTeamValuePerSpecificTeam(Team team)
+        {
+            IList<TeamValue> teamValue = new List<TeamValue>();
+            return BuildTeamValueCollection(team, teamValue).OrderByDescending(x=>x.PlayerWinPercentage).ToList();
+           
+        }
+
+        private IEnumerable<TeamValue> BuildTeamValueCollection(Team team, IList<TeamValue> teamValue )
+        {
+            if (team == null) return new List<TeamValue>();
+
+            var teamWinPercentage = GetTeamWinPercentage(team);
+            double playerWeighting = 0;
+            double playerWinsPerc = 0;
+            var hundredMarkCount = 0;
+
+            foreach (var player in team.Players)
+            {
+                playerWinsPerc += GetPlayerWinPercentage(player.PlayerNumber);
+
+                if (player.Matches >= 100)
+                {
+                    playerWeighting = StatsWeighting.Apply(playerWinsPerc, player.Matches);
+                    hundredMarkCount++;
+                }
+            }
+            if (hundredMarkCount >= 1)
+            {
+                teamValue.Add(new TeamValue
+                {
+                    Id = new Random().Next(52),
+                    Name = team.Name + " Team Value",
+                    TeamWinsPercentage = teamWinPercentage,
+                    PlayerWinPercentage = playerWinsPerc,
+                    PlayerWeighting = playerWeighting
+                });
+            }
+            return teamValue;
+        }
     }
 }

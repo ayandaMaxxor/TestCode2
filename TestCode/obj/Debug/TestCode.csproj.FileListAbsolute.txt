@@ -1,5 +1,5 @@
 D:\Work\ION\TestCode2\TestCode\bin\Debug\TestCode.dll
 D:\Work\ION\TestCode2\TestCode\bin\Debug\TestCode.pdb
-D:\Work\ION\TestCode2\TestCode\obj\Debug\TestCode.csprojResolveAssemblyReference.cache
 D:\Work\ION\TestCode2\TestCode\obj\Debug\TestCode.dll
 D:\Work\ION\TestCode2\TestCode\obj\Debug\TestCode.pdb
+D:\Work\ION\TestCode2\TestCode\obj\Debug\TestCode.csprojResolveAssemblyReference.cache
